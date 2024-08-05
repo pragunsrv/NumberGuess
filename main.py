@@ -179,9 +179,58 @@ def enhanced_number_guessing_game_v4():
     display_stats(attempts, max_attempts, success)
     save_game_stats(attempts, max_attempts, success, number_to_guess)
 
+# New functionalities in version 5
+def leaderboard_entry(username, attempts):
+    with open("leaderboard.txt", "a") as file:
+        file.write(f"{username}: {attempts} attempts\n")
+
+def display_leaderboard():
+    try:
+        with open("leaderboard.txt", "r") as file:
+            print("\nLeaderboard:")
+            print(file.read())
+    except FileNotFoundError:
+        print("No leaderboard data found.")
+
+def enhanced_number_guessing_game_v5():
+    print("Welcome to the Enhanced Number Guessing Game Version 5!")
+    load_game_stats()
+    display_leaderboard()
+    
+    number_to_guess = set_difficulty()
+    guess = None
+    attempts = 0
+    max_attempts = 10
+    
+    username = input("Enter your username: ")
+    
+    while guess != number_to_guess and attempts < max_attempts:
+        guess = get_valid_guess()
+        attempts += 1
+
+        if guess < number_to_guess:
+            print("Too low! Try again.")
+            show_hint(number_to_guess, guess)
+        elif guess > number_to_guess:
+            print("Too high! Try again.")
+            show_hint(number_to_guess, guess)
+        else:
+            print("Congratulations! You guessed the number.")
+        
+        print(f"Attempts left: {max_attempts - attempts}")
+    
+    success = guess == number_to_guess
+    if not success:
+        print(f"Sorry, you've run out of attempts. The number was {number_to_guess}. Better luck next time!")
+    
+    display_stats(attempts, max_attempts, success)
+    save_game_stats(attempts, max_attempts, success, number_to_guess)
+    if success:
+        leaderboard_entry(username, attempts)
+
 if __name__ == "__main__":
     while True:
-        enhanced_number_guessing_game_v4()
+        enhanced_number_guessing_game_v5()
         if not play_again():
             print("Thanks for playing! Goodbye!")
             break
