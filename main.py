@@ -1,6 +1,7 @@
 import random
 import time
 import json
+import os
 
 # Basic number guessing game
 def number_guessing_game():
@@ -242,7 +243,6 @@ def display_highscores():
     except FileNotFoundError:
         print("No highscores data found.")
 
-# New functionalities in version 9
 def user_profile():
     try:
         with open("user_profiles.json", "r") as file:
@@ -276,7 +276,33 @@ def display_user_profile(username):
     else:
         print(f"No profile found for {username}.")
 
-def enhanced_number_guessing_game_v9():
+def save_game_summary(username, score, time_taken):
+    summary = {
+        "username": username,
+        "score": score,
+        "time_taken": time_taken
+    }
+    if not os.path.exists("game_summary.json"):
+        with open("game_summary.json", "w") as file:
+            json.dump([summary], file, indent=4)
+    else:
+        with open("game_summary.json", "r") as file:
+            summaries = json.load(file)
+        summaries.append(summary)
+        with open("game_summary.json", "w") as file:
+            json.dump(summaries, file, indent=4)
+
+def display_game_summary():
+    try:
+        with open("game_summary.json", "r") as file:
+            summaries = json.load(file)
+            print("\nGame Summaries:")
+            for summary in summaries:
+                print(f"Username: {summary['username']}, Score: {summary['score']}, Time Taken: {summary['time_taken']:.2f} seconds")
+    except FileNotFoundError:
+        print("No game summary data found.")
+
+def enhanced_number_guessing_game_v10():
     game_intro()
     display_highscores()
     
@@ -304,20 +330,20 @@ def enhanced_number_guessing_game_v9():
     
     success = guess == number_to_guess
     score = max_attempts - attempts if success else 0
-    if not success:
-        print(f"Sorry, you've run out of attempts. The number was {number_to_guess}. Better luck next time!")
-    
-    display_stats(attempts, max_attempts, success)
+    time_taken = 0
     if success:
+        time_taken = timed_gameplay()[0]
         save_highscore(username, score)
         save_user_profile(username, attempts, score)
+        save_game_summary(username, score, time_taken)
     
     display_user_profile(username)
+    display_game_summary()
     
     if play_again():
-        enhanced_number_guessing_game_v9()
+        enhanced_number_guessing_game_v10()
     else:
         print("Thanks for playing! Goodbye!")
 
 if __name__ == "__main__":
-    enhanced_number_guessing_game_v9()
+    enhanced_number_guessing_game_v10()
