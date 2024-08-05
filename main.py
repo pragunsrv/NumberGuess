@@ -266,6 +266,7 @@ def timed_gameplay():
     return time_taken, success
 
 def leaderboard_entry_with_time(username, attempts, time_taken):
+    attempts = attempts
     with open("leaderboard_with_time.txt", "a") as file:
         file.write(f"{username}: {attempts} attempts, {time_taken:.2f} seconds\n")
 
@@ -287,12 +288,60 @@ def enhanced_number_guessing_game_v6():
     time_taken, success = timed_gameplay()
     
     if success:
-        leaderboard_entry_with_time(username, time_taken)
+        leaderboard_entry_with_time(username, attempts, time_taken)
     
     if play_again():
         enhanced_number_guessing_game_v6()
     else:
         print("Thanks for playing! Goodbye!")
 
+# New functionalities in version 7
+def multi_level_game():
+    print("Welcome to the Multi-Level Number Guessing Game!")
+    
+    level = 1
+    total_attempts = 0
+    max_levels = 3
+    
+    while level <= max_levels:
+        print(f"\n--- Level {level} ---")
+        number_to_guess = set_difficulty()
+        guess = None
+        attempts = 0
+        max_attempts = 10
+        
+        while guess != number_to_guess and attempts < max_attempts:
+            guess = get_valid_guess()
+            attempts += 1
+
+            if guess < number_to_guess:
+                print("Too low! Try again.")
+                show_hint(number_to_guess, guess)
+            elif guess > number_to_guess:
+                print("Too high! Try again.")
+                show_hint(number_to_guess, guess)
+            else:
+                print(f"Congratulations! You guessed the number in level {level}.")
+                break
+
+            print(f"Attempts left: {max_attempts - attempts}")
+        
+        if guess != number_to_guess:
+            print(f"Sorry, you've run out of attempts. The number was {number_to_guess}. Moving to the next level.")
+        
+        total_attempts += attempts
+        level += 1
+    
+    print("\nGame Over!")
+    print(f"Total attempts used across all levels: {total_attempts}")
+
+def enhanced_number_guessing_game_v7():
+    multi_level_game()
+    
+    if play_again():
+        enhanced_number_guessing_game_v7()
+    else:
+        print("Thanks for playing! Goodbye!")
+
 if __name__ == "__main__":
-    enhanced_number_guessing_game_v6()
+    enhanced_number_guessing_game_v7()
