@@ -129,9 +129,59 @@ def enhanced_number_guessing_game_v3():
     
     display_stats(attempts, max_attempts, success)
 
+# New functionalities in version 4
+def save_game_stats(attempts, max_attempts, success, number_to_guess):
+    with open("game_stats.txt", "a") as file:
+        file.write("Game Statistics:\n")
+        file.write(f"Total attempts: {attempts}\n")
+        file.write(f"Maximum attempts allowed: {max_attempts}\n")
+        file.write(f"Number to guess: {number_to_guess}\n")
+        if success:
+            file.write("Result: Won\n\n")
+        else:
+            file.write("Result: Lost\n\n")
+
+def load_game_stats():
+    try:
+        with open("game_stats.txt", "r") as file:
+            print("\nPrevious Game Statistics:")
+            print(file.read())
+    except FileNotFoundError:
+        print("No previous game statistics found.")
+
+def enhanced_number_guessing_game_v4():
+    print("Welcome to the Enhanced Number Guessing Game Version 4!")
+    load_game_stats()
+    number_to_guess = set_difficulty()
+    guess = None
+    attempts = 0
+    max_attempts = 10
+
+    while guess != number_to_guess and attempts < max_attempts:
+        guess = get_valid_guess()
+        attempts += 1
+
+        if guess < number_to_guess:
+            print("Too low! Try again.")
+            show_hint(number_to_guess, guess)
+        elif guess > number_to_guess:
+            print("Too high! Try again.")
+            show_hint(number_to_guess, guess)
+        else:
+            print("Congratulations! You guessed the number.")
+        
+        print(f"Attempts left: {max_attempts - attempts}")
+    
+    success = guess == number_to_guess
+    if not success:
+        print(f"Sorry, you've run out of attempts. The number was {number_to_guess}. Better luck next time!")
+    
+    display_stats(attempts, max_attempts, success)
+    save_game_stats(attempts, max_attempts, success, number_to_guess)
+
 if __name__ == "__main__":
     while True:
-        enhanced_number_guessing_game_v3()
+        enhanced_number_guessing_game_v4()
         if not play_again():
             print("Thanks for playing! Goodbye!")
             break
