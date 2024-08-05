@@ -1,5 +1,6 @@
 import random
 
+# Basic number guessing game
 def number_guessing_game():
     print("Welcome to the Number Guessing Game!")
     number_to_guess = random.randint(1, 100)
@@ -31,14 +32,7 @@ def play_again():
         else:
             print("Invalid input. Please enter 'yes' or 'no'.")
 
-if __name__ == "__main__":
-    while True:
-        number_guessing_game()
-        if not play_again():
-            print("Thanks for playing! Goodbye!")
-            break
-
-# Additional functionality added to version 2
+# Additional functionality in version 2
 def get_valid_guess():
     while True:
         try:
@@ -87,10 +81,57 @@ def enhanced_number_guessing_game():
     if guess != number_to_guess:
         print(f"Sorry, you've run out of attempts. The number was {number_to_guess}. Better luck next time!")
 
+# New functionalities in version 3
+def show_hint(number_to_guess, guess):
+    hint = ""
+    if abs(number_to_guess - guess) <= 5:
+        hint = "You're very close!"
+    elif abs(number_to_guess - guess) <= 10:
+        hint = "You're close!"
+    else:
+        hint = "You're far off!"
+    print(f"Hint: {hint}")
+
+def display_stats(attempts, max_attempts, success):
+    print("\nGame Statistics:")
+    print(f"Total attempts: {attempts}")
+    print(f"Maximum attempts allowed: {max_attempts}")
+    if success:
+        print("You won the game!")
+    else:
+        print("You lost the game!")
+
+def enhanced_number_guessing_game_v3():
+    print("Welcome to the Enhanced Number Guessing Game Version 3!")
+    number_to_guess = set_difficulty()
+    guess = None
+    attempts = 0
+    max_attempts = 10
+
+    while guess != number_to_guess and attempts < max_attempts:
+        guess = get_valid_guess()
+        attempts += 1
+
+        if guess < number_to_guess:
+            print("Too low! Try again.")
+            show_hint(number_to_guess, guess)
+        elif guess > number_to_guess:
+            print("Too high! Try again.")
+            show_hint(number_to_guess, guess)
+        else:
+            print("Congratulations! You guessed the number.")
+        
+        print(f"Attempts left: {max_attempts - attempts}")
+    
+    success = guess == number_to_guess
+    if not success:
+        print(f"Sorry, you've run out of attempts. The number was {number_to_guess}. Better luck next time!")
+    
+    display_stats(attempts, max_attempts, success)
+
 if __name__ == "__main__":
     while True:
-        enhanced_number_guessing_game()
+        enhanced_number_guessing_game_v3()
         if not play_again():
             print("Thanks for playing! Goodbye!")
             break
-5
