@@ -35,7 +35,6 @@ def play_again():
         else:
             print("Invalid input. Please enter 'yes' or 'no'.")
 
-# Additional functionality in version 2
 def get_valid_guess():
     while True:
         try:
@@ -345,5 +344,96 @@ def enhanced_number_guessing_game_v10():
     else:
         print("Thanks for playing! Goodbye!")
 
+def simulate_games():
+    """Simulate several games to populate stats and leaderboards"""
+    usernames = ["Alice", "Bob", "Charlie", "Diana", "Eve"]
+    for username in usernames:
+        for _ in range(5):
+            print(f"\nSimulating game for {username}...")
+            time_taken, success = timed_gameplay()
+            save_highscore(username, random.randint(1, 100))
+            save_user_profile(username, random.randint(1, 10), random.randint(1, 100))
+            save_game_summary(username, random.randint(1, 100), time_taken)
+
+def advanced_statistics():
+    """Display advanced statistics about the games played"""
+    try:
+        with open("game_summary.json", "r") as file:
+            summaries = json.load(file)
+            total_time = sum(summary['time_taken'] for summary in summaries)
+            average_time = total_time / len(summaries) if summaries else 0
+            total_scores = sum(summary['score'] for summary in summaries)
+            average_score = total_scores / len(summaries) if summaries else 0
+
+            print("\nAdvanced Game Statistics:")
+            print(f"Total games played: {len(summaries)}")
+            print(f"Average score: {average_score:.2f}")
+            print(f"Average time taken: {average_time:.2f} seconds")
+    except FileNotFoundError:
+        print("No game summary data found.")
+
+def user_statistics(username):
+    """Display statistics for a specific user"""
+    profiles = user_profile()
+    if username in profiles:
+        user_profile = profiles[username]
+        total_attempts = user_profile['attempts']
+        total_scores = sum(user_profile['scores'])
+        average_score = total_scores / len(user_profile['scores']) if user_profile['scores'] else 0
+        print(f"\nStatistics for {username}:")
+        print(f"Total attempts: {total_attempts}")
+        print(f"Average score: {average_score:.2f}")
+    else:
+        print(f"No profile found for {username}.")
+
+def detailed_game_summary():
+    """Display a detailed summary of game stats and leaderboards"""
+    display_game_summary()
+    display_leaderboard_with_time()
+    advanced_statistics()
+
+def enhanced_number_guessing_game_v11():
+    game_intro()
+    display_highscores()
+    
+    number_to_guess = set_difficulty()
+    guess = None
+    attempts = 0
+    max_attempts = 10
+    
+    username = input("Enter your username: ")
+    
+    while guess != number_to_guess and attempts < max_attempts:
+        guess = get_valid_guess()
+        attempts += 1
+
+        if guess < number_to_guess:
+            print("Too low! Try again.")
+            show_hint(number_to_guess, guess)
+        elif guess > number_to_guess:
+            print("Too high! Try again.")
+            show_hint(number_to_guess, guess)
+        else:
+            print("Congratulations! You guessed the number.")
+        
+        print(f"Attempts left: {max_attempts - attempts}")
+    
+    success = guess == number_to_guess
+    score = max_attempts - attempts if success else 0
+    time_taken = 0
+    if success:
+        time_taken = timed_gameplay()[0]
+        save_highscore(username, score)
+        save_user_profile(username, attempts, score)
+        save_game_summary(username, score, time_taken)
+    
+    display_user_profile(username)
+    detailed_game_summary()
+    
+    if play_again():
+        enhanced_number_guessing_game_v11()
+    else:
+        print("Thanks for playing! Goodbye!")
+
 if __name__ == "__main__":
-    enhanced_number_guessing_game_v10()
+    enhanced_number_guessing_game_v11()
